@@ -223,7 +223,7 @@ STP = A3
 ![image](https://user-images.githubusercontent.com/19898602/164376788-1b06e117-8d0a-4525-bc4e-676893774e8a.png)
 
 
-# Demo Arduio proejct
+# Demo Arduino proejct
 
 Below is the code so that you can connect all the components with PCB and run them one by one with the help of encoder and 16x2 LCD display
 
