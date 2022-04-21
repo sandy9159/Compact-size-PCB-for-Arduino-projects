@@ -24,7 +24,7 @@ I design this PCB in Easyeda and order it from [JLCPCB.com](https://jlcpcb.com/I
 
 ![image](https://user-images.githubusercontent.com/19898602/164375763-e2d4c7e3-20bf-4157-b0ca-faaa43c52ab8.png)![image](https://user-images.githubusercontent.com/19898602/164375808-3edca2de-070f-4af5-986d-3dc743876d5a.png)
 
-He we first see the overview of PCB means what is this PCB capable of and which components you can connect to the PCB.
+Here we first see the overview of PCB means what is this PCB capable of and which components you can connect to the PCB.
 
 # List of the Components you can connect to the PCB
 
@@ -225,7 +225,7 @@ STP = A3
 
 # Demo Arduio proejct
 
-Below is the link to download the demo code so that you can connect all the components with PCB and run them one by one with the help of encoder and 16x2 LCD display
+Below is the code so that you can connect all the components with PCB and run them one by one with the help of encoder and 16x2 LCD display
 
 
 
