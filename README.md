@@ -19,14 +19,14 @@ This PCB is very much helpful in building any project and no need to worry about
 
 I design this PCB in Easyeda and order it from [JLCPCB.com](https://jlcpcb.com/IAT) they offer very affordable rate for quality PCB.
 
-**Step 1: Overview of PCB**
+# Overview of PCB
 
 
 ![image](https://user-images.githubusercontent.com/19898602/164375763-e2d4c7e3-20bf-4157-b0ca-faaa43c52ab8.png)![image](https://user-images.githubusercontent.com/19898602/164375808-3edca2de-070f-4af5-986d-3dc743876d5a.png)
 
 He we first see the overview of PCB means what is this PCB capable of and which components you can connect to the PCB.
 
-**List of the Components you can connect to the PCB**
+# List of the Components you can connect to the PCB
 
 ![image](https://user-images.githubusercontent.com/19898602/164375847-fd7101ee-0744-45ba-86f3-9df44bd28873.png)
 
@@ -52,7 +52,7 @@ He we first see the overview of PCB means what is this PCB capable of and which 
 2 Stepper motors
 
 
-**Special features of PCB**
+# Special features of PCB 
 
 ![image](https://user-images.githubusercontent.com/19898602/164375902-aab9a1c4-c87c-43cd-9666-9f5abeebec2a.png)
 
@@ -84,7 +84,7 @@ ON board 5V and 9V regulator no need to arrange different power sources
 Header pins and screw terminals for easy connections
 
 
-**Step 2: PCB Design and PIN Details**
+# PCB Design and PIN Details
 
 
 ![b](https://user-images.githubusercontent.com/19898602/164375961-2278b4e2-0209-49fa-a1ea-0588c8e57c32.JPG)![c](https://user-images.githubusercontent.com/19898602/164375975-362c836c-359e-436e-a462-8bcb1155d997.JPG)
@@ -126,7 +126,7 @@ Now no need to order components separately for you PCB and get free from stress 
 For more detials & offers please visit [JLCPCB.com](https://jlcpcb.com/IAT)
 
 
-**Pin details of PCB**
+# Pin details of PCB
 
 **DC MOTORS**
 
@@ -217,52 +217,288 @@ DIR2 = A2
 STP = A3
 
 
-**Step 3: Component Used**
+# Component Used
 
 
-5V DC Jack ----- 1 no
+![image](https://user-images.githubusercontent.com/19898602/164376788-1b06e117-8d0a-4525-bc4e-676893774e8a.png)
 
 
-LM7805 ---- 2 nos
+# Demo Arduio proejct
+
+Below is the link to download the demo code so that you can connect all the components with PCB and run them one by one with the help of encoder and 16x2 LCD display
 
 
-LM7809------1 no
+
+```
+#include <Wire.h>
+#include "rgb_lcd.h"
+rgb_lcd lcd;
+#define CLK 3
+#define DT 2
+#define SW 4
+#include <L298N.h>
+#include <Servo.h>
+#include "BasicStepperDriver.h"
+#include "MultiDriver.h"
+#include "SyncDriver.h"
+#define MOTOR_STEPS 200
+#define MOTOR_X_RPM 60
+#define MOTOR_Y_RPM 60
+#define DIR_X A0
+#define STEP_X A1
+#define DIR_Y A2
+#define STEP_Y A3
+#define MICROSTEPS 16
+BasicStepperDriver stepperX(MOTOR_STEPS, DIR_X, STEP_X);
+BasicStepperDriver stepperY(MOTOR_STEPS, DIR_Y, STEP_Y);
+MultiDriver controller(stepperX, stepperY);
+
+int counter = 0;
+int currentStateCLK;
+int lastStateCLK;
+String currentDir = "";
+unsigned long lastButtonPress = 0;
+int screen = 0;
+int state = 0;
+int flag = 0;
+const unsigned int IN1_A = 7;
+const unsigned int IN2_A = 8;
+const unsigned int IN1_B = 10;
+const unsigned int IN2_B = 11;
+const unsigned int EN = 9;
+Servo myservo1;
+Servo myservo2;
+int pos = 0;
+
+// Create one motor instance
+L298N motor1(EN, IN1_A, IN2_A);
+L298N motor2(EN, IN1_B, IN2_B);
+
+void setup() {
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+  motor1.setSpeed(120);
+  motor2.setSpeed(120);
+  pinMode(CLK, INPUT);
+  pinMode(DT, INPUT);
+  pinMode(SW, INPUT_PULLUP);
+  lastStateCLK = digitalRead(CLK);
+  stepperX.begin(MOTOR_X_RPM, MICROSTEPS);
+  stepperY.begin(MOTOR_Y_RPM, MICROSTEPS);
+
+}
+
+void loop() {
+  if (state == 0) {
+    lcd.setCursor(0, 0);
+    lcd.print ("Press to start");
+  }
+  if (counter > 5) {
+    counter = 0;
+  }
+
+  int btnState = digitalRead(SW);
+  if (btnState == LOW) {
+    if (millis() - lastButtonPress > 50) {
+      Serial.println("Button pressed!");
+      lcd.clear();
+      state = 1;
+      screen ++;
+      flag = 0;
+      Serial.println(screen);
+    }
+
+    lastButtonPress = millis();
+  }
+
+  if (state == 1) {
+    currentStateCLK = digitalRead(CLK);
+    if (currentStateCLK != lastStateCLK  && currentStateCLK == 1) {
+      if (digitalRead(DT) != currentStateCLK) {
+        counter --;
+        currentDir = "CCW";
+        lcd.clear();
+      } else {
+        counter ++;
+        currentDir = "CW";
+        lcd.clear();
+      }
+
+      Serial.print("Direction: ");
+      Serial.print(currentDir);
+      Serial.print(" | Counter: ");
+      Serial.println(counter);
+    }
+    lastStateCLK = currentStateCLK;
+
+    if (screen == 1) {
+      Stop();
+    }
+    if (counter == 0) {
+      DC_motor1();
+      if (screen == 2) {
+        lcd.setCursor(0, 1);
+        lcd.print ("Running...");
+        screen = 0;
+        A ();
+      }
+    }
+
+    if (counter == 1) {
+      DC_motor2();
+      if (screen == 2) {
+        lcd.setCursor(0, 1);
+        lcd.print ("Running...");
+        screen = 0;
+        B ();
+      }
+    }
+
+    if (counter == 2) {
+      Servo1();
+      if (screen == 2) {
+        lcd.setCursor(0, 1);
+        lcd.print ("Running...");
+        screen = 0;
+        C ();
+      }
+    }
+    if (counter == 3) {
+      Servo2();
+      if (screen == 2) {
+        lcd.setCursor(0, 1);
+        lcd.print ("Running...");
+        screen = 0;
+        D ();
+      }
+    }
+
+    if (counter == 4) {
+      Stepper1();
+      if (screen == 2) {
+        lcd.setCursor(0, 1);
+        lcd.print ("Running...");
+        screen = 0;
+        flag = 1;
+      }
+    }
+    if (counter == 5) {
+      Stepper2();
+      if (screen == 2) {
+        lcd.setCursor(0, 1);
+        lcd.print ("Running...");
+        screen = 0;
+        flag = 2;
+      }
+    }
+  }
+
+  delay(5);
+}
 
 
-4.7uF cap ------ 1 no
+void DC_motor1() {
+
+  lcd.setCursor(0, 0);
+  lcd.print ("DC MOTOR 1");
+}
+
+void DC_motor2() {
+
+  lcd.setCursor(0, 0);
+  lcd.print ("DC MOTOR 2");
+}
+
+void Servo1() {
+
+  lcd.setCursor(0, 0);
+  lcd.print ("Servo 1");
+}
+
+void Servo2() {
+
+  lcd.setCursor(0, 0);
+  lcd.print ("Servo 2");
+}
+
+void Stepper1() {
+
+  lcd.setCursor(0, 0);
+  lcd.print ("Stepper 1");
+}
+
+void Stepper2() {
+
+  lcd.setCursor(0, 0);
+  lcd.print ("Stepper 2");
+}
 
 
-1uF cap ----- 2 no
+
+void A () {
+  motor1.forward();
+}
+
+void B () {
+  motor2.forward();
+}
+
+void Stop() {
+  motor1.stop();
+  motor2.stop();
+  myservo1.detach();
+  myservo2.detach();
+  controller.rotate(0, 0);
+}
 
 
-47uF cap ---- 1 no
+void C () {
+  myservo1.attach(9);
+
+  for (pos = 0; pos <= 180; pos += 1) {
+    // in steps of 1 degree
+    myservo1.write(pos);
+    delay(15);
+  }
+  for (pos = 180; pos >= 0; pos -= 1) {
+    myservo1.write(pos);
+    delay(15);
+
+  }
+}
 
 
-N5408 Diode ----- 1 no
+void D () {
+  myservo2.attach(10);
+  for (pos = 0; pos <= 180; pos += 1) {
+    // in steps of 1 degree
+    myservo2.write(pos);
+    delay(15);
+  }
+  for (pos = 180; pos >= 0; pos -= 1) {
+    myservo2.write(pos);
+    delay(15);
+
+  }
+}
+
+void E() {
+  controller.rotate(1, 0);
+}
+
+void X() {
+  controller.rotate(0, 1);
+}
+
+```
 
 
-FR207 Diode ------ 8 nos
 
 
-5mm LED ------ 1 no
+
+![MVI_0011_1](https://user-images.githubusercontent.com/19898602/164378235-e78dabd3-d77d-404e-bead-084f5cf1036a.gif)
 
 
-L298N IC ------- 1 no
 
 
-Arduino Nano ----- 1 no
 
-
-A4988 driver ------- 2 nos
-
-
-Screw terminals ------ 2 x 6 nos
-
-
-Male female header pins
-
-
-200 ohm Resistor --- 1 no
-
-
-1.5K ohm Resistor ---- 2 nos
