@@ -109,7 +109,7 @@ https://oshwlab.com/sharmaz747/multipurpose-pcb_copy_copy_copy
 
 SMT Assembly service of [JLCPCB.com](https://jlcpcb.com/IAT) is cherry on top now get your PCB fully assembled and save your time and money
 Select components for your PCB from there Parts Library of 200k+ in-stock components
-they are offering $27 valued New User coupons  & $24 SMT coupons every month
+they are offering $30 valued New User coupons  & $24 SMT coupons every month
 $8.00 setup fee, and $0.0017  per joint
 
 Now no need to order components separately for you PCB and get free from stress of soldering them on PCB just try PCB SMT assembly service and get you PCB with components pre assembled and ready for the project
@@ -118,7 +118,7 @@ Now no need to order components separately for you PCB and get free from stress 
 👉 Try PCBA service of [JLCPCB.com](https://jlcpcb.com/IAT) and save your time and money, get PCB ready for project, 200K+ components in library of [JLCPCB.com](https://jlcpcb.com/IAT) as well as 3rd party         parts to choose from. 
     Assembly will support 10M+ parts from Digikey, mouser
     
-👉 $27 valued New User coupons 
+👉 $30 valued New User coupons 
 
 👉 $24 SMT coupons every month
 
